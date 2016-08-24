@@ -37,16 +37,17 @@ public class Play {
 
     public static void main(String[] args) {
 
+
         Deck deck = new Deck();
 
-        for (int i = 0; i < 60; i++) { //convert Deck array to shuffledDeck ArrayList
+        for (int i = 0; i < 60; ++i) { //convert Deck array to shuffledDeck ArrayList
 
-            shuffledDeck.add(Deck.cards[i]);
+            shuffledDeck.add(deck.cards[i]);
         }
 
         Collections.shuffle(shuffledDeck);
 
-        for(int i=0; i<60; i++) { //print each card with attributes from shuffled Deck
+        for(int i=0; i<60; ++i) { //print each card with attributes from shuffled Deck
             System.out.println(shuffledDeck.get(i));
         }
 
@@ -76,7 +77,7 @@ public class Play {
 
 
 
-                for(int i=0; i<8; i++){ //add 8 cards to each hand and delete those cards from deck
+                for(int i=0; i<8; ++i){ //add 8 cards to each hand and remove those cards from deck
 
                     fillThreeHands();
                 }
@@ -103,7 +104,7 @@ public class Play {
                 playerFourName = input.nextLine();
                 playerFour = new Player(playerFourName);
 
-                for(int i=0; i<8; i++){ //add 8 cards to each hand and delete those cards from deck
+                for(int i=0; i<8; ++i){ //add 8 cards to each hand and delete those cards from deck
 
                     fillThreeHands();
                     playerFourHand.add(shuffledDeck.get(0));
@@ -140,7 +141,7 @@ public class Play {
                 playerFiveName = input.nextLine();
                 playerFive = new Player(playerFiveName);
 
-                for(int i=0; i<8; i++){ //add 8 cards to each hand and delete those cards from deck
+                for(int i=0; i<8; ++i){ //add 8 cards to each hand and delete those cards from deck
 
                     fillThreeHands();
                     playerFourHand.add(shuffledDeck.get(0));
@@ -183,7 +184,7 @@ public class Play {
 
         System.out.println("\n");
 
-        for(int i=0; i<8; i++) {
+        for(int i=0; i<8; ++i) {
 
             if((playerOneHand.get(i)).getName().startsWith("The ")){
 
@@ -199,7 +200,7 @@ public class Play {
 
         System.out.println("\n");
 
-        for(int i=0; i<8; i++) {
+        for(int i=0; i<8; ++i) {
 
             if((playerTwoHand.get(i)).getName().startsWith("The ")){
 
@@ -215,7 +216,7 @@ public class Play {
 
         System.out.println("\n");
 
-        for(int i=0; i<8; i++) {
+        for(int i=0; i<8; ++i) {
 
             if((playerThreeHand.get(i)).getName().startsWith("The ")){
 
@@ -231,7 +232,7 @@ public class Play {
 
         System.out.println("\n");
 
-        for(int i=0; i<8; i++) {
+        for(int i=0; i<8; ++i) {
 
             if((playerFourHand.get(i)).getName().startsWith("The ")){
 
@@ -247,7 +248,7 @@ public class Play {
 
         System.out.println("\n");
 
-        for(int i=0; i<8; i++) {
+        for(int i=0; i<8; ++i) {
 
             if((playerFiveHand.get(i)).getName().startsWith("The ")){
 
@@ -261,7 +262,7 @@ public class Play {
     }
     public static void printCardAttributesFromShuffledDeck(){ //print name and selected attribute of all Mineral and Trump Cards in shuffledDeck arrayList
 
-        for(int i=0; i<shuffledDeck.size(); i++) {
+        for(int i=0; i<shuffledDeck.size(); ++i) {
 
             if((shuffledDeck.get(i)).getName().startsWith("The ")){
 
@@ -359,7 +360,7 @@ public class Play {
         while((shuffledDeck.get(number)).getName().startsWith("The ") ||
                 (shuffledDeck.get(number + 1)).getName().startsWith("The ")){ //make sure there are no trump cards
 
-            number+=1;
+            ++number;
         }
         return number;
     }
