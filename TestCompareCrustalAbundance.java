@@ -7,7 +7,7 @@ public class TestCompareCrustalAbundance {
 
     static Deck deck;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) { //create deck of cards, randomly select 2 adjacent cards and compare their crustal abundance locations in the array
 
         String [] crustalAbundanceHierarchy = {"ultratrace", "trace", "low", "moderate", "high", "very high"}; //make crustal abundance array - low to high
 

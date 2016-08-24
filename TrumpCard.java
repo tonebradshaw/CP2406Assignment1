@@ -8,10 +8,10 @@ public class TrumpCard extends Card{ //trump card information
     public TrumpCard(){ //default constructor
 
     }
-    public TrumpCard(String name, String catagory){ //trump card constructor
+    public TrumpCard(String name, String category){ //trump card constructor
 
         super(name);
-        this.category = catagory;
+        this.category = category;
     }
 
     public String getCategory(){

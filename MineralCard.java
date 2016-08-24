@@ -2,7 +2,7 @@
  * Created by tony on 29/07/2016.
  * Object has all card information
  */
-public class MineralCard extends Card{ //card information
+public class MineralCard extends Card{ //inherit name from card and add extra information
 
     private String formula;
     private String classification;
@@ -14,9 +14,6 @@ public class MineralCard extends Card{ //card information
     private String crustalAbundance;
     private String economicValue;
 
-    public MineralCard(){ //default constructor
-
-    }
     public MineralCard(String name, String formula, String classification, String crystalSystem, String occurrence, Double hardness,
                        Double specificGravity, String cleavage, String crustalAbundance, String economicValue) { //10 attribute constructor
 
@@ -31,7 +28,7 @@ public class MineralCard extends Card{ //card information
         this.crustalAbundance = crustalAbundance;
         this.economicValue = economicValue;
     }
-
+    //functions to retrieve card information
     public String getFormula(){
         return formula;
     }
@@ -61,7 +58,7 @@ public class MineralCard extends Card{ //card information
     }
 
     @Override
-    public String toString() { //used to print card values
+    public String toString() { //used to print card information
 
         return "Name: " + this.getName() + '\n' +
                "Formula: " + this.getFormula() + '\n' +

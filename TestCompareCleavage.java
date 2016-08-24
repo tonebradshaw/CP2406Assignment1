@@ -7,7 +7,7 @@ public class TestCompareCleavage {
 
     static Deck deck;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) { //create deck of cards, randomly select 2 adjacent cards and compare their cleavage locations in the array
 
         String [] cleavageHierarchy = {"none", "poor/none", "1 poor", "2 poor", "1 good", "1 good, 1 poor", "2 good", "3 good",
                 "1 perfect", "1 perfect, 1 good", "1 perfect, 2 good", "2 perfect, 1 good", "3 perfect", "4 perfect", "6 perfect"}; //make cleavage array - low to high

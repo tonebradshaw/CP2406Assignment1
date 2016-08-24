@@ -1,7 +1,7 @@
 /**
  * Created by tony on 21/08/2016.
  */
-public class TestTrumpCard {
+public class TestTrumpCard { //create and print a trump card
 
     public static void main(String[] args) {
 

@@ -7,7 +7,7 @@ public class TestCompareEconomicValue {
 
     static Deck deck;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) { //create deck of cards, randomly select 2 adjacent cards and compare their economic value locations in the array
 
         String [] economicValueHierarchy = {"trivial", "low", "moderate", "high", "very high", "I'm rich!"}; //make economic value array - low to high
 

@@ -7,7 +7,7 @@ public class Deck {
 
     public Card [] cards;
 
-    public Deck() {
+    public Deck() { //create deck of cards with trumps spread evenly throughout
 
         cards = new Card[60];
 

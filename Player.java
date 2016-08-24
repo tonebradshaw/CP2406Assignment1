@@ -9,16 +9,15 @@ public class Player {
     private String name;
     private ArrayList <Card> hand;
 
-    public Player(String name){
+    public Player(String name){ //player constructor
 
         this.name = name;
     }
-    public String getName(){
+    public String getName(){ //retrieve player's name
 
         return name;
     }
-
-    public ArrayList getHand(){
+    public ArrayList getHand(){ //retrieve arrayList for player's hand
 
         hand = new ArrayList<>();
         return hand;

@@ -5,10 +5,7 @@ public class Card {
 
     private String name;
 
-    public Card(){ //default constructor
-
-    }
-    public Card(String name){ //default constructor
+    public Card(String name){ //card constructor
 
         this.name = name;
     }
