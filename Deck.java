@@ -1,9 +1,11 @@
+import java.lang.reflect.Array;
+
 /**
  * Created by tony on 12/08/2016.
  */
 public class Deck {
 
-    static Card [] cards;
+    public Card [] cards;
 
     public Deck() {
 
