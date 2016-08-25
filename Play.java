@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Scanner;
 
@@ -9,12 +8,12 @@ import java.util.Scanner;
 
 public class Play {
 
-    static ArrayList <ArrayList> hands;
     static ArrayList <Card> playerOneHand;
     static ArrayList <Card> playerTwoHand;
     static ArrayList <Card> playerThreeHand;
     static ArrayList <Card> playerFourHand;
     static ArrayList <Card> playerFiveHand;
+    static String [] playerNames;
     static Scanner input;
     static Player playerOne;
     static Player playerTwo;
@@ -27,6 +26,7 @@ public class Play {
     static String playerThreeName;
     static String playerFourName;
     static String playerFiveName;
+    static int playerNumber;
 
     static ArrayList<Card> shuffledDeck = new ArrayList<>();
 
@@ -59,21 +59,23 @@ public class Play {
 
         }while(numberOfPlayers != 3 && numberOfPlayers != 4 && numberOfPlayers != 5);
 
-        playerOneHand = new ArrayList<>();
-        playerTwoHand = new ArrayList<>();
-        playerThreeHand = new ArrayList<>();
+        playerNames = new String [numberOfPlayers];
 
         switch(numberOfPlayers){ //build selected number of hands of 8 cards
 
-            case 3: // create 3 player's hands
-                //Hand hands = new Hand(shuffledDeck, playerOneHand, playerTwoHand, playerThreeHand);
+            case 3: //create 3 player's hands
 
-                enterFirstThreePlayersNames();
+                enterFirstThreePlayersNames(); //enter first three player's names
+
+                playerNumber = (int)(Math.random() * numberOfPlayers); //randomly choose player 1, the following players are in order of entry
+
+                buildFirstThreePlayers();
 
                 for(int i=0; i<8; ++i){ //add 8 cards to each hand and remove those cards from deck
 
                     fillThreeHands();
                 }
+                //print all hands
                 System.out.println("\n" + playerOne.getName() + "'s hand - Player One");
                 printPlayerOneHand();
                 System.out.println("\n" + playerTwo.getName() + "'s hand - Player Two");
@@ -81,20 +83,24 @@ public class Play {
                 System.out.println("\n" + playerThree.getName() + "'s hand - Player Three");
                 printPlayerThreeHand();
                 System.out.println(shuffledDeck.size());
+
                 break;
 
             case 4: // create 4 player's hands
 
-                playerFourHand = new ArrayList<>();
+                enterFirstThreePlayersNames(); //enter first three player's names
 
-                //Hand hands = new Hand(shuffledDeck, playerOneHand, playerTwoHand, playerThreeHand, playerFourHand);
-
-                enterFirstThreePlayersNames();
-
-                System.out.print("Enter fourth player name: ");
+                System.out.print("Enter fourth player name: "); //add 4th player
                 input = new Scanner(System.in);
                 playerFourName = input.nextLine();
-                playerFour = new Player(playerFourName);
+                playerNames [3] = playerFourName;
+
+                playerNumber = (int)(Math.random() * numberOfPlayers); //randomly choose player 1, the following players are in order of entry
+
+                buildFirstThreePlayers();
+
+                playerFour = new Player(playerNames[playerNumber]); //build 4th player
+                playerFourHand = playerFour.getHand();
 
                 for(int i=0; i<8; ++i){ //add 8 cards to each hand and delete those cards from deck
 
@@ -102,6 +108,7 @@ public class Play {
                     playerFourHand.add(shuffledDeck.get(0));
                     shuffledDeck.remove(0);
                 }
+                //print all hands
                 System.out.println("\n" + playerOne.getName() + "'s hand - Player One");
                 printPlayerOneHand();
                 System.out.println("\n" + playerTwo.getName() + "'s hand - Player Two");
@@ -116,22 +123,27 @@ public class Play {
 
             case 5: // create 5 player's hands
 
-                playerFourHand = new ArrayList<>();
-                playerFiveHand = new ArrayList<>();
+                enterFirstThreePlayersNames(); //enter first three player's names
 
-                //Hand hands = new Hand(shuffledDeck, playerOneHand, playerTwoHand, playerThreeHand, playerFourHand, playerFiveHand);
-
-                enterFirstThreePlayersNames();
-
-                System.out.print("Enter fourth player name: ");
+                System.out.print("Enter fourth player name: "); //add 4th player
                 input = new Scanner(System.in);
                 playerFourName = input.nextLine();
-                playerFour = new Player(playerFourName);
+                playerNames [3] = playerFourName;
 
-                System.out.print("Enter fifth player name: ");
+                System.out.print("Enter fifth player name: "); //add 5th player
                 input = new Scanner(System.in);
                 playerFiveName = input.nextLine();
-                playerFive = new Player(playerFiveName);
+                playerNames [4] = playerFiveName;
+
+                playerNumber = (int)(Math.random() * numberOfPlayers); //randomly choose player 1, the following players are in order of entry
+
+                buildFirstThreePlayers();
+
+                playerFour = new Player(playerNames[playerNumber]);  //build 4th player
+                playerFourHand = playerFour.getHand();
+                incrementPlayerNumber();
+                playerFive = new Player(playerNames[playerNumber]); //build 5th player
+                playerFiveHand = playerFive.getHand();
 
                 for(int i=0; i<8; ++i){ //add 8 cards to each hand and delete those cards from deck
 
@@ -141,6 +153,7 @@ public class Play {
                     playerFiveHand.add(shuffledDeck.get(0));
                     shuffledDeck.remove(0);
                 }
+                //print all hands
                 System.out.println("\n" + playerOne.getName() + "'s hand - Player One");
                 printPlayerOneHand();
                 System.out.println("\n" + playerTwo.getName() + "'s hand - Player Two");
@@ -164,7 +177,6 @@ public class Play {
         shuffledDeck.remove(0);
         playerThreeHand.add(shuffledDeck.get(0));
         shuffledDeck.remove(0);
-
     }
     public static void printPlayerOneHand(){
 
@@ -251,14 +263,35 @@ public class Play {
         System.out.print("Enter first player name: ");
         Scanner input = new Scanner(System.in);
         playerOneName = input.nextLine();
-        playerOne = new Player(playerOneName);
+        playerNames [0] = playerOneName;
         System.out.print("Enter second player name: ");
         input = new Scanner(System.in);
         playerTwoName = input.nextLine();
-        playerTwo = new Player(playerTwoName);
+        playerNames [1] = playerTwoName;
         System.out.print("Enter third player name: ");
         input = new Scanner(System.in);
         playerThreeName = input.nextLine();
-        playerThree = new Player(playerThreeName);
+        playerNames [2] = playerThreeName;
+    }
+    public static int incrementPlayerNumber(){
+
+        ++playerNumber;
+        if(playerNumber > numberOfPlayers - 1){
+
+            playerNumber = 0;
+        }
+        return playerNumber;
+    }
+    public static void buildFirstThreePlayers(){
+
+        playerOne = new Player(playerNames[playerNumber]);
+        playerOneHand = playerOne.getHand();
+        incrementPlayerNumber();
+        playerTwo = new Player(playerNames[playerNumber]);
+        playerTwoHand = playerTwo.getHand();
+        incrementPlayerNumber();
+        playerThree = new Player(playerNames[playerNumber]);
+        playerThreeHand = playerThree.getHand();
+        incrementPlayerNumber();
     }
 }
