@@ -5,9 +5,6 @@ public class TrumpCard extends Card{ //trump card information
 
     private String category;
 
-    public TrumpCard(){ //default constructor
-
-    }
     public TrumpCard(String name, String category){ //trump card constructor
 
         super(name);
@@ -20,7 +17,7 @@ public class TrumpCard extends Card{ //trump card information
 
     @Override
     public String toString() { //used to print trump card values
-        return "Name: " + this.getName() + '\n' +
-                "Category: " + this.getCategory()+ '\n' ;
+        return "Name: " + this.getName() + ",  " +
+                "Category: " + this.getCategory()+ "\n" ;
     }
 }
