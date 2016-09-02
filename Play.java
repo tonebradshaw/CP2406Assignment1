@@ -1,4 +1,6 @@
+import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Scanner;
 
@@ -8,12 +10,9 @@ import java.util.Scanner;
 
 public class Play {
 
-    static ArrayList <Card> playerOneHand;
-    static ArrayList <Card> playerTwoHand;
-    static ArrayList <Card> playerThreeHand;
-    static ArrayList <Card> playerFourHand;
-    static ArrayList <Card> playerFiveHand;
     static String [] playerNames;
+    static String [] playerOrder;
+    static ArrayList <Card> discardedCards;
     static Scanner input;
     static Player playerOne;
     static Player playerTwo;
@@ -21,12 +20,16 @@ public class Play {
     static Player playerFour;
     static Player playerFive;
     static int numberOfPlayers;
-    static String playerOneName;
-    static String playerTwoName;
-    static String playerThreeName;
-    static String playerFourName;
-    static String playerFiveName;
-    static int playerNumber;
+    static String playerNameOne;
+    static String playerNameTwo;
+    static String playerNameThree;
+    static String playerNameFour;
+    static String playerNameFive;
+    static int playerNumber, playerTurn, turn;
+    static int playerPosition, rounds;
+    static int handCards;
+    static String entry;
+    static String playerSequence;
 
     static ArrayList<Card> shuffledDeck = new ArrayList<>();
 
@@ -60,6 +63,10 @@ public class Play {
         }while(numberOfPlayers != 3 && numberOfPlayers != 4 && numberOfPlayers != 5);
 
         playerNames = new String [numberOfPlayers];
+        playerOrder = new String [numberOfPlayers];
+        discardedCards = new ArrayList<>();
+        turn = 0;
+        rounds = 0;
 
         switch(numberOfPlayers){ //build selected number of hands of 8 cards
 
@@ -68,6 +75,7 @@ public class Play {
                 enterFirstThreePlayersNames(); //enter first three player's names
 
                 playerNumber = (int)(Math.random() * numberOfPlayers); //randomly choose player 1, the following players are in order of entry
+                playerPosition = playerNumber;
 
                 buildFirstThreePlayers();
 
@@ -75,14 +83,14 @@ public class Play {
 
                     fillThreeHands();
                 }
-                //print all hands
-                System.out.println("\n" + playerOne.getName() + "'s hand - Player One");
-                printPlayerOneHand();
-                System.out.println("\n" + playerTwo.getName() + "'s hand - Player Two");
-                printPlayerTwoHand();
-                System.out.println("\n" + playerThree.getName() + "'s hand - Player Three");
-                printPlayerThreeHand();
-                System.out.println(shuffledDeck.size());
+                if(rounds == 0) {
+                    displayPlayerSequence();
+                    playerWaitToStart();
+                    selectPlayerOneCard();
+                    rounds = 1;
+                }
+                //playerWaitToStart();
+                //selectPlayerOneCard();
 
                 break;
 
@@ -90,188 +98,122 @@ public class Play {
 
                 enterFirstThreePlayersNames(); //enter first three player's names
 
-                System.out.print("Enter fourth player name: "); //add 4th player
+                System.out.print("Enter fourth player name: "); //enter 4th player's name
                 input = new Scanner(System.in);
-                playerFourName = input.nextLine();
-                playerNames [3] = playerFourName;
+                playerNameFour = input.nextLine();
+                playerNames [3] = playerNameFour;
 
                 playerNumber = (int)(Math.random() * numberOfPlayers); //randomly choose player 1, the following players are in order of entry
+                playerPosition = playerNumber;
+                playerTurn = playerNumber;
 
                 buildFirstThreePlayers();
 
                 playerFour = new Player(playerNames[playerNumber]); //build 4th player
-                playerFourHand = playerFour.getHand();
+                playerOrder[3] = playerFour.getName();
+                //playerFourHand = playerFour.getHand();
 
                 for(int i=0; i<8; ++i){ //add 8 cards to each hand and delete those cards from deck
 
                     fillThreeHands();
-                    playerFourHand.add(shuffledDeck.get(0));
+                    playerFour.getHand().add(shuffledDeck.get(0));
                     shuffledDeck.remove(0);
                 }
-                //print all hands
-                System.out.println("\n" + playerOne.getName() + "'s hand - Player One");
-                printPlayerOneHand();
-                System.out.println("\n" + playerTwo.getName() + "'s hand - Player Two");
-                printPlayerTwoHand();
-                System.out.println("\n" + playerThree.getName() + "'s hand - Player Three");
-                printPlayerThreeHand();
-                System.out.println("\n" + playerFour.getName() + "'s hand - Player Four");
-                printPlayerFourHand();
-                System.out.println(shuffledDeck.size());
-
                 break;
 
             case 5: // create 5 player's hands
 
                 enterFirstThreePlayersNames(); //enter first three player's names
 
-                System.out.print("Enter fourth player name: "); //add 4th player
+                System.out.print("Enter fourth player name: "); //add 4th player's name
                 input = new Scanner(System.in);
-                playerFourName = input.nextLine();
-                playerNames [3] = playerFourName;
+                playerNameFour = input.nextLine();
+                playerNames [3] = playerNameFour;
 
-                System.out.print("Enter fifth player name: "); //add 5th player
+                System.out.print("Enter fifth player name: "); //add 5th player's name
                 input = new Scanner(System.in);
-                playerFiveName = input.nextLine();
-                playerNames [4] = playerFiveName;
+                playerNameFive = input.nextLine();
+                playerNames [4] = playerNameFive;
 
                 playerNumber = (int)(Math.random() * numberOfPlayers); //randomly choose player 1, the following players are in order of entry
-
+                playerPosition = playerNumber;
                 buildFirstThreePlayers();
 
-                playerFour = new Player(playerNames[playerNumber]);  //build 4th player
-                playerFourHand = playerFour.getHand();
+                playerFour = new Player(playerNames[playerNumber]); //build 4th player
+                playerOrder[3] = playerFour.getName();
                 incrementPlayerNumber();
                 playerFive = new Player(playerNames[playerNumber]); //build 5th player
-                playerFiveHand = playerFive.getHand();
+                playerOrder[4] = playerFive.getName();
 
                 for(int i=0; i<8; ++i){ //add 8 cards to each hand and delete those cards from deck
 
                     fillThreeHands();
-                    playerFourHand.add(shuffledDeck.get(0));
+                    playerFour.getHand().add(shuffledDeck.get(0));
                     shuffledDeck.remove(0);
-                    playerFiveHand.add(shuffledDeck.get(0));
+                    playerFive.getHand().add(shuffledDeck.get(0));
                     shuffledDeck.remove(0);
                 }
-                //print all hands
-                System.out.println("\n" + playerOne.getName() + "'s hand - Player One");
-                printPlayerOneHand();
-                System.out.println("\n" + playerTwo.getName() + "'s hand - Player Two");
-                printPlayerTwoHand();
-                System.out.println("\n" + playerThree.getName() + "'s hand - Player Three");
-                        printPlayerThreeHand();
-                System.out.println("\n" + playerFour.getName() + "'s hand - Player Four");
-                printPlayerFourHand();
-                System.out.println("\n" + playerFive.getName() + "'s hand - Player Five");
-                printPlayerFiveHand();
-                System.out.println(shuffledDeck.size());
-
                 break;
+        }
+    }
+    public static void playerWaitToStart(){
+
+        JOptionPane.showMessageDialog(null, playerOrder[turn] + " press OK when you are ready to play");
+    }
+    public static void displayPlayerSequence(){ //display the players names in order of play
+        if(numberOfPlayers == 3) {
+            String playerSequence = "The order of play is " + playerNames[playerPosition] + ", " + playerNames[incrementPlayerPosition()] + ", "
+                    + playerNames[incrementPlayerPosition()];
+            JOptionPane.showMessageDialog(null, playerSequence);
+        }else if(numberOfPlayers == 4) {
+            String playerSequence = "The order of play is " + playerNames[playerPosition] + ", " + playerNames[incrementPlayerPosition()] + ", "
+                    + playerNames[incrementPlayerPosition()] + ", " + playerNames[incrementPlayerPosition()];
+            JOptionPane.showMessageDialog(null, playerSequence);
+        }else if(numberOfPlayers == 5) {
+            String playerSequence = "The order of play is " + playerNames[playerPosition] + ", " + playerNames[incrementPlayerPosition()] + ", "
+                    + playerNames[incrementPlayerPosition()] + ", " + playerNames[incrementPlayerPosition()] + ", " + playerNames[incrementPlayerPosition()];
+            JOptionPane.showMessageDialog(null, playerSequence);
         }
     }
     public static void fillThreeHands(){
 
-        playerOneHand.add(shuffledDeck.get(0));
+        playerOne.getHand().add(shuffledDeck.get(0));
         shuffledDeck.remove(0);
-        playerTwoHand.add(shuffledDeck.get(0));
+        playerTwo.getHand().add(shuffledDeck.get(0));
         shuffledDeck.remove(0);
-        playerThreeHand.add(shuffledDeck.get(0));
+        playerThree.getHand().add(shuffledDeck.get(0));
         shuffledDeck.remove(0);
     }
-    public static void printPlayerOneHand(){
+    public static void selectPlayerOneCard(){
 
-        System.out.println("\n");
+        handCards = playerOne.getHand().size();
+        int count = 1;
+        StringBuilder message = new StringBuilder();
+        for(int i = 0; i < handCards; ++i){
 
-        for(int i=0; i<8; ++i) {
-
-            if((playerOneHand.get(i)).getName().startsWith("The ")){
-
-                System.out.println((playerOneHand.get(i)).getName() + " - Category: " +
-                        ((TrumpCard)playerOneHand.get(i)).getCategory()); //print out selected Trump Card attributes
-                continue;
-            }
-            System.out.println((playerOneHand.get(i)).getName() + " - Hardness: " +
-                    ((MineralCard) playerOneHand.get(i)).getHardness()); //print out selected Mineral Card attribute
+            String script = "\n" + count + ".   " + playerOne.getHand().get(i);
+            message.append(script);
+            ++count;
         }
-    }
-    public static void printPlayerTwoHand(){
-
-        System.out.println("\n");
-
-        for(int i=0; i<8; ++i) {
-
-            if((playerTwoHand.get(i)).getName().startsWith("The ")){
-
-                System.out.println((playerTwoHand.get(i)).getName() + " - Category: " +
-                        ((TrumpCard)playerTwoHand.get(i)).getCategory()); //print out selected Trump Card attributes
-                continue;
-            }
-            System.out.println((playerTwoHand.get(i)).getName() + " - Hardness: " +
-                    ((MineralCard) playerTwoHand.get(i)).getHardness()); //print out selected Mineral Card attribute
-        }
-    }
-    public static void printPlayerThreeHand(){
-
-        System.out.println("\n");
-
-        for(int i=0; i<8; ++i) {
-
-            if((playerThreeHand.get(i)).getName().startsWith("The ")){
-
-                System.out.println((playerThreeHand.get(i)).getName() + " - Category: " +
-                        ((TrumpCard)playerThreeHand.get(i)).getCategory()); //print out selected Trump Card attributes
-                continue;
-            }
-            System.out.println((playerThreeHand.get(i)).getName() + " - Hardness: " +
-                    ((MineralCard) playerThreeHand.get(i)).getHardness()); //print out selected Mineral Card attribute
-        }
-    }
-    public static void printPlayerFourHand(){
-
-        System.out.println("\n");
-
-        for(int i=0; i<8; ++i) {
-
-            if((playerFourHand.get(i)).getName().startsWith("The ")){
-
-                System.out.println((playerFourHand.get(i)).getName() + " - Category: " +
-                        ((TrumpCard)playerFourHand.get(i)).getCategory()); //print out selected Trump Card attributes
-                continue;
-            }
-            System.out.println((playerFourHand.get(i)).getName() + " - Hardness: " +
-                    ((MineralCard) playerFourHand.get(i)).getHardness()); //print out selected Mineral Card attribute
-        }
-    }
-    public static void printPlayerFiveHand(){
-
-        System.out.println("\n");
-
-        for(int i=0; i<8; ++i) {
-
-            if((playerFiveHand.get(i)).getName().startsWith("The ")){
-
-                System.out.println((playerFiveHand.get(i)).getName() + " - Category: " +
-                        ((TrumpCard)playerFiveHand.get(i)).getCategory()); //print out selected Trump Card attributes
-                continue;
-            }
-            System.out.println((playerFiveHand.get(i)).getName() + " - Hardness: " +
-                    ((MineralCard) playerFiveHand.get(i)).getHardness()); //print out selected Mineral Card attribute
-        }
+        message.append("\n" + count + ". Pick a card from deck");
+        message.append("\n\n" + ++count + ". Pass");
+        message.append("\n\nPlease enter a number 0-" + count);
+        String choice = JOptionPane.showInputDialog(null,playerOne.getName() + "'s cards are: " + message);
     }
     public static void enterFirstThreePlayersNames(){
 
         System.out.print("Enter first player name: ");
         Scanner input = new Scanner(System.in);
-        playerOneName = input.nextLine();
-        playerNames [0] = playerOneName;
+        playerNameOne = input.nextLine();
+        playerNames [0] = playerNameOne;
         System.out.print("Enter second player name: ");
         input = new Scanner(System.in);
-        playerTwoName = input.nextLine();
-        playerNames [1] = playerTwoName;
+        playerNameTwo = input.nextLine();
+        playerNames [1] = playerNameTwo;
         System.out.print("Enter third player name: ");
         input = new Scanner(System.in);
-        playerThreeName = input.nextLine();
-        playerNames [2] = playerThreeName;
+        playerNameThree = input.nextLine();
+        playerNames [2] = playerNameThree;
     }
     public static int incrementPlayerNumber(){
 
@@ -282,16 +224,37 @@ public class Play {
         }
         return playerNumber;
     }
+    public static int incrementPlayerPosition(){
+
+        ++playerPosition;
+        if(playerPosition > numberOfPlayers - 1){
+
+            playerPosition = 0;
+        }
+        return playerPosition;
+    }
     public static void buildFirstThreePlayers(){
 
         playerOne = new Player(playerNames[playerNumber]);
-        playerOneHand = playerOne.getHand();
+        playerOrder[0] = playerOne.getName();
         incrementPlayerNumber();
         playerTwo = new Player(playerNames[playerNumber]);
-        playerTwoHand = playerTwo.getHand();
+        playerOrder[1] = playerTwo.getName();
         incrementPlayerNumber();
         playerThree = new Player(playerNames[playerNumber]);
-        playerThreeHand = playerThree.getHand();
+        playerOrder[2] = playerThree.getName();
         incrementPlayerNumber();
+    }
+    public static void clearScreen(){
+
+        for(int i = 0; i < 50; ++i) { //clear screen
+
+            System.out.println("\n");
+        }
+    }
+    public static void pressEnterToContinue(){
+        System.out.print(" press ENTER to continue...");
+        input = new Scanner(System.in);
+        String go = input.nextLine();
     }
 }
