@@ -4,10 +4,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Scanner;
 
-/**
- * Created by tony on 12/08/2016.
- */
-
 public class Play {
 
     static String [] playerNames;
@@ -32,7 +28,7 @@ public class Play {
     static int handCards, category, question, card;
     static String choice, activeCategory;
     static String activeCardNotice;
-
+    static Card [] hold;
     static ArrayList <Card> shuffledDeck = new ArrayList<>();
     static Player [] players = new Player [5];
     static String [] cleavageHierarchy = {"none", "poor/none", "1 poor", "2 poor", "1 good", "1 good, 1 poor", "2 good", "3 good",
@@ -50,7 +46,7 @@ public class Play {
             shuffledDeck.add(deck.cards[i]);
         }
 
-        Collections.shuffle(shuffledDeck); //shuffle the card deck
+        Collections.shuffle(shuffledDeck); //shuffle the deck
 
         //input - enter how many players
         do { //check input until an integer between 3 and 5 is entered
@@ -86,25 +82,25 @@ public class Play {
 
                     fillThreeHands();
                 }
-                if(gos == 0) { //first player play
+                if(gos == 0) { //first player plays
 
-                    displayPlayerSequence();
-                    playerWaitToStart();
+                    displayPlayerSequence(); //window showing the players in order of play
+                    playerWaitToStart(); //wait til player is ready
 
                     do { //view cards and select active category until satisfied
 
                         category = selectFirstCategory(players[playerNumber]); //display cards and select category
                         question = checkCategory(category); //check selected category
 
-                    }while(question != 0); //until category is accepted
+                    }while(question != 0); //loop until category is accepted
 
-                    activeCategory = categories[category];
+                    activeCategory = categories[category]; //set active category
                     card = selectFirstCard(); //select card to throw
                     discardedCards.add(0, hand.get(card)); //add chosen card to discard pile
                     hand.remove(card); //remove card from hand
                     activeCard = discardedCards.get(0); //select active card
                     activeCardNotice = getActiveCardValues(); //add to display to show the active category and value
-                    incrementPlayerPosition();
+                    incrementPlayerPosition(); //
                     gos = 1;
                 }
                 do{
@@ -116,39 +112,54 @@ public class Play {
 
                         card = selectPlayerCard(players[playerNumber]); //return list selection
 
-                        if (card == players[playerNumber].getHand().size()) { //pick up selected
+                        if (card == players[playerNumber].getHand().size()) { //pick up from deck
 
-                            if(shuffledDeck.size() == 0){ //if deck has been used
+                            if(shuffledDeck.size() == 0){ //if there are no more cards to pick up
 
-                                JOptionPane.showMessageDialog(null, "There are no more cards to pick up " +
-                                        "\nYou must choose \"Pass\"");
-                                compare = 0;
-                            }else{
-                                players[playerNumber].getHand().add(shuffledDeck.get(0)); //get another card
-                                shuffledDeck.remove(0); //remove card from deck
-                                System.out.println(shuffledDeck.size());
-                                compare = 1; //allow
+                                hold = new Card [1]; //create holding array
+                                hold[0] = discardedCards.get(0); //add active card to array
+                                discardedCards.remove(0); //remove active card from discard pile
+
+                                for(int i = discardedCards.size() - 1; i >= 0 ; --i){ //transfer discards to shuffled deck
+
+                                    shuffledDeck.add(discardedCards.get(i)); //add card to deck
+                                    discardedCards.remove(i); //remove card from pile
+                                }
+                                Collections.shuffle(shuffledDeck); //shuffle the deck
+                                discardedCards.add(hold[0]); //add active card to empty discard pile
                             }
-
-                        }else if(card == players[playerNumber].getHand().size() + 1){
-
-                            compare = 1;
+                            players[playerNumber].getHand().add(shuffledDeck.get(0)); //get another card
+                            shuffledDeck.remove(0); //remove card from deck
+                            compare = 1; //allow
                         }else{
+                            if (card == players[playerNumber].getHand().size() + 1) { //pass selected
 
-                            compare = compareValues(hand.get(card), activeCategory); //compare card selected to active card
-                            if(compare == 1){
-                                discardedCards.add(0, hand.get(card)); //add chosen card to discard pile
-                                hand.remove(card); //remove card from hand
+                                compare = 1;
+                            } else { //select card
+
+                                compare = compareValues(hand.get(card), activeCategory); //compare card selected to active card
+                                if (compare == 1) {
+                                    discardedCards.add(0, hand.get(card)); //add chosen card to discard pile
+                                    hand.remove(card); //remove card from hand
+                                }
                             }
                         }
-                    }while(compare == 0);
+                    }while(compare == 0); //loop until result is satisfactory
 
                     activeCard = discardedCards.get(0); //select active card
                     activeCardNotice = getActiveCardValues(); //add to display to show the active category and value
                     incrementPlayerPosition();
 
-                }while(playerOne.getHand().size() > 0 && playerTwo.getHand().size() > 0 && playerThree.getHand().size() > 0);
-
+                }while(playerOne.getHand().size() > 0 && playerTwo.getHand().size() > 0 && playerThree.getHand().size() > 0); //loop until end of game
+                //display winner
+                if(playerOne.getHand().size() == 0){
+                    JOptionPane.showMessageDialog(null, "Yay!! Congratz on the win " + playerOne.getName());
+                }else if(playerTwo.getHand().size() == 0){
+                    JOptionPane.showMessageDialog(null, "Yay!! Congratz on the win " + playerTwo.getName());
+                }else if(playerThree.getHand().size() == 0){
+                    JOptionPane.showMessageDialog(null, "Yay!! Congratz on the win " + playerThree.getName());
+                }
+                System.exit(0); //end program
                 break;
 
             case 4: // create 4 player's hands
@@ -214,27 +225,31 @@ public class Play {
                 break;
         }
     }
-    public static void playerWaitToStart(){ //wait for player so cards are not visible to other players
+    public static void playerWaitToStart(){ //wait for player to respond so cards are not visible to other players
 
-        JOptionPane.showMessageDialog(null, players[playerPosition].getName() + " press OK when you are ready to play");
+        JOptionPane.showMessageDialog(null, playerNames[playerNumber] + " press OK when you are ready to play");
     }
     public static void displayPlayerSequence(){ //display the players names in order of play
 
         if(numberOfPlayers == 3) {
-            String playerSequence = playerNumber + " The order of play is " + playerNames[playerPosition] + ", " + playerNames[incrementPlayerPosition()] + ", "
-                    + playerNames[incrementPlayerPosition()];
+
+            String playerSequence = "The order of play is " + playerNames[playerNumber] + ", " + playerNames[incrementPlayerNumber()] + ", "
+                    + playerNames[incrementPlayerNumber()];
             JOptionPane.showMessageDialog(null, playerSequence);
-            System.out.println(playerNumber + " 1");
+
         }else if(numberOfPlayers == 4) {
-            String playerSequence = "The order of play is " + playerNames[playerPosition] + ", " + playerNames[incrementPlayerPosition()] + ", "
-                    + playerNames[incrementPlayerPosition()] + ", " + playerNames[incrementPlayerPosition()];
+
+            String playerSequence = "The order of play is " + playerNames[playerNumber] + ", " + playerNames[incrementPlayerNumber()] + ", "
+                    + playerNames[incrementPlayerNumber()] + ", " + playerNames[incrementPlayerNumber()];
             JOptionPane.showMessageDialog(null, playerSequence);
+
         }else if(numberOfPlayers == 5) {
-            String playerSequence = "The order of play is " + playerNames[playerPosition] + ", " + playerNames[incrementPlayerPosition()] + ", "
-                    + playerNames[incrementPlayerPosition()] + ", " + playerNames[incrementPlayerPosition()] + ", " + playerNames[incrementPlayerPosition()];
+
+            String playerSequence = "The order of play is " + playerNames[playerNumber] + ", " + playerNames[incrementPlayerNumber()] + ", "
+                    + playerNames[incrementPlayerNumber()] + ", " + playerNames[incrementPlayerNumber()] + ", " + playerNames[incrementPlayerNumber()];
             JOptionPane.showMessageDialog(null, playerSequence);
         }
-        incrementPlayerPosition();
+        incrementPlayerNumber();
     }
     public static void fillThreeHands(){ //add cards to first three players hands
 
@@ -245,15 +260,15 @@ public class Play {
         playerThree.getHand().add(shuffledDeck.get(0));
         shuffledDeck.remove(0);
     }
-    public static int selectPlayerCard(Player player){ //select card from selected hand
+    public static int selectPlayerCard(Player player){ //player selects card from displayed hand
 
-        hand = player.getHand();
-        handCards = player.getHand().size();
+        hand = player.getHand(); //get current player's hand
+        handCards = player.getHand().size(); //get number of cards
         int count = 1;
         int number = 0;
         StringBuilder message = new StringBuilder();
 
-        for(int i = 0; i < handCards; ++i){ //build player selection display
+        for(int i = 0; i < handCards; ++i){ //build player card selection display
 
             String script = "\n" + count + ".   " + player.getHand().get(i);
             message.append(script);
@@ -271,17 +286,17 @@ public class Play {
 
         do { //continue to choose the category number while selection is not among the choices
             try{
-                choice = JOptionPane.showInputDialog(null,activeCardNotice + "\n" + players[playerPosition].getName() + "'s cards are: " + message);
+                choice = JOptionPane.showInputDialog(null,activeCardNotice + "\n" + playerNames[playerNumber] + "'s cards are: " + message);
                 number = Integer.parseInt(choice);
 
             } catch (Exception e) { //catch an input that isn't an integer
 
-                JOptionPane.showMessageDialog(null, "You must enter an integer 1-" + handCards + 2);
+                JOptionPane.showMessageDialog(null, "You must enter an integer 1-" + (handCards + 2));
             }
         }while(number < 1 || number > handCards + 2);
         return number - 1; //change value to element number
     }
-    public static void enterFirstThreePlayersNames(){
+    public static void enterFirstThreePlayersNames(){ //add names for 3 players
 
         System.out.print("Enter first player name: ");
         Scanner input = new Scanner(System.in);
@@ -329,19 +344,19 @@ public class Play {
         playerOrder[2] = playerThree.getName();
         incrementPlayerNumber();
     }
-    public static int selectFirstCategory(Player player){ //view hand and select category
+    public static int selectFirstCategory(Player player){ //view first player hand and select category
 
         int number = 0;
         hand = player.getHand();
         handCards = player.getHand().size();
         StringBuilder message = new StringBuilder();
 
-        for(int i = 0; i < handCards; ++i){ //append each card to hand to display
+        for(int i = 0; i < handCards; ++i){ //append each card in hand to display
 
             String script = "\n" + hand.get(i);
             message.append(script);
         }
-        message.append("\nChoose a category (1-5): \n"); //add question
+        message.append("\nChoose a category (1-5): \n"); //add category question
         int count = 1;
 
         for(int i = 0; i < categories.length; ++i){ //append each number selection with category
@@ -354,37 +369,36 @@ public class Play {
         }
         do { //continue to choose the category number while selection is not among the choices
             try{
-                choice = JOptionPane.showInputDialog(null, players[playerNumber].getName() + "'s cards are: " + message);
-                number = Integer.parseInt(choice);
+                choice = JOptionPane.showInputDialog(null, playerNames[playerNumber] + "'s cards are: " + message);
+                number = Integer.parseInt(choice); //make choice an integer
 
             } catch (Exception e) { //catch an input that isn't an integer
 
                 JOptionPane.showMessageDialog(null, "You must enter an integer 1-5");
             }
-            if(number < 0 || number > categories.length){
+            if(number < 0 || number > categories.length){ //if choice is outside range
 
                 JOptionPane.showMessageDialog(null, "You must enter an integer 1-" + categories.length);
             }
-        }while(number < 1 || number > categories.length);
-        return number - 1; //change value to element number
+        }while(number < 1 || number > categories.length); //category choice is within range
+        return number - 1; //change number value to element number
     }
     static public int checkCategory(int category){ //check if selected category is wanted
 
         return JOptionPane.showConfirmDialog(null, "You have chosen " + categories[category] +
-                "\nIs this correct?", "You have chosen " + categories[category] +
-                "\nIs this correct?", JOptionPane.YES_NO_OPTION);
+                "\nIs this correct?", "Category Accept/Reject", JOptionPane.YES_NO_OPTION);
     }
     public static int selectFirstCard(){ //select first card to throw
 
         int count = 1;
         int number = 0;
         handCards = hand.size();
-        StringBuilder message = new StringBuilder();
+        StringBuilder message = new StringBuilder(); //build card display
 
         message.append("\nThe Active category is ");
         message.append(activeCategory);
         message.append(".\n"); //print active card and chosen active category
-        message.append(players[playerNumber].getName() + "'s cards are: ");
+        message.append(playerNames[playerNumber] + "'s cards are: ");
 
         for(int i = 0; i < handCards; ++i){ //display hand with selection numbers
 
@@ -408,12 +422,12 @@ public class Play {
 
                 JOptionPane.showMessageDialog(null, "You must enter an integer 1-" + hand.size());
             }
-        }while(number < 1 || number > hand.size() + 2);
+        }while(number < 1 || number > hand.size() + 2); //choice is within range
         return number - 1; //change to element number
     }
-    public static String getActiveCardValues(){ //build message at top of screen
+    static String getActiveCardValues(){ //build message at top of screen
 
-        stringBuilder = new StringBuilder();
+        stringBuilder = new StringBuilder(); //build message
 
         if(activeCard.getName().startsWith("The ")){ //check if active card is a trump card
             stringBuilder.append("Active Card is: "); //add active card name
@@ -435,11 +449,12 @@ public class Play {
 
                 activeCategory = categories[category];
             }
-            stringBuilder.append("\nThe Active category is ");
+            stringBuilder.append("\nThe Active category is "); //add category to message
             stringBuilder.append(activeCategory);
             stringBuilder.append("\n");
 
             return stringBuilder.toString();
+
         }else { //message if active card is a mineral card
             stringBuilder.append("Active Card is: ");
             stringBuilder.append(activeCard.getName());
@@ -448,7 +463,7 @@ public class Play {
             stringBuilder.append(activeCategory);
             stringBuilder.append(".\n"); //print active card and chosen active category
 
-            //select message for different category
+            //select message for each category
             if(activeCategory.equals("Hardness")){
                 stringBuilder.append("Your ");
                 stringBuilder.append(activeCategory);
