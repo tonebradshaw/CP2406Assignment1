@@ -7,7 +7,7 @@ import java.util.Scanner;
 public class Play {
 
     static String [] playerNames;
-    static String [] playerOrder;
+    //static String [] playerOrder;
     static ArrayList <Card> hand;
     static ArrayList <Card> discardedCards;
     static Card activeCard;
@@ -24,13 +24,15 @@ public class Play {
     static String playerNameFour;
     static String playerNameFive;
     static int playerNumber, numberOfPlayers;
-    static int playerPosition, gos, compare;
+    static int playerPosition, gos, compare, playGame;
     static int handCards, category, question, card;
     static String choice, activeCategory;
-    static String activeCardNotice;
+    static String activeCardNotice, menu;
     static Card [] hold;
+    static final int NUMBER_OF_CARDS_PER_HAND = 8;
+    static final int MAX_NUMBER_OF_PLAYERS = 5;
     static ArrayList <Card> shuffledDeck = new ArrayList<>();
-    static Player [] players = new Player [5];
+    static Player [] players = new Player [MAX_NUMBER_OF_PLAYERS];
     static String [] cleavageHierarchy = {"none", "poor/none", "1 poor", "2 poor", "1 good", "1 good, 1 poor", "2 good", "3 good",
             "1 perfect", "1 perfect, 1 good", "1 perfect, 2 good", "2 perfect, 1 good", "3 perfect", "4 perfect", "6 perfect"};
     static String [] crustalAbundanceHierarchy = {"ultratrace", "trace", "low", "moderate", "high", "very high"};
@@ -39,9 +41,15 @@ public class Play {
 
     public static void main(String[] args) {
 
+        playGame = playGameMenu(); //play or quit
+        if(playGame == 2){
+
+            System.exit(0); //end program
+        }
+
         Deck deck = new Deck();
 
-        for (int i = 0; i < 60; ++i) { //convert Deck array to shuffledDeck ArrayList
+        for (int i = 0; i < Deck.DECK_SIZE; ++i) { //convert Deck array to shuffledDeck ArrayList
 
             shuffledDeck.add(deck.cards[i]);
         }
@@ -62,7 +70,7 @@ public class Play {
         }while(numberOfPlayers != 3 && numberOfPlayers != 4 && numberOfPlayers != 5); //loop while number of players is out of range
 
         playerNames = new String [numberOfPlayers]; //array containing player's names
-        playerOrder = new String [numberOfPlayers]; //array containing player's names in order of play
+        //playerOrder = new String [numberOfPlayers]; //array containing player's names in order of play
         discardedCards = new ArrayList<>(); //arrayList containing the discard pile
 
         gos = 0;
@@ -74,11 +82,10 @@ public class Play {
                 enterFirstThreePlayersNames(); //enter first three player's names
 
                 playerNumber = (int)(Math.random() * numberOfPlayers); //randomly choose player 1, the following players are in order of entry
-                playerPosition = playerNumber; //allow playerNumber to be used in different sequences
 
                 buildFirstThreePlayers(); //build playerOne, playerTwo and playerThree
 
-                for(int i=0; i<8; ++i){ //add 8 cards to each hand and remove those cards from deck
+                for(int i=0; i < NUMBER_OF_CARDS_PER_HAND; ++i){ //add 8 cards to each hand and remove those cards from deck
 
                     fillThreeHands();
                 }
@@ -100,7 +107,7 @@ public class Play {
                     hand.remove(card); //remove card from hand
                     activeCard = discardedCards.get(0); //select active card
                     activeCardNotice = getActiveCardValues(); //add to display to show the active category and value
-                    incrementPlayerPosition(); //
+
                     gos = 1;
                 }
                 do{
@@ -148,7 +155,6 @@ public class Play {
 
                     activeCard = discardedCards.get(0); //select active card
                     activeCardNotice = getActiveCardValues(); //add to display to show the active category and value
-                    incrementPlayerPosition();
 
                 }while(playerOne.getHand().size() > 0 && playerTwo.getHand().size() > 0 && playerThree.getHand().size() > 0); //loop until end of game
                 //display winner
@@ -172,16 +178,15 @@ public class Play {
                 playerNames [3] = playerNameFour;
 
                 playerNumber = (int)(Math.random() * numberOfPlayers); //randomly choose player 1, the following players are in order of entry
-                playerPosition = playerNumber;
 
                 buildFirstThreePlayers();
 
                 playerFour = new Player(playerNames[playerNumber]); //build 4th player
                 players[3] = playerFour;
-                playerOrder[3] = playerFour.getName();
+                //playerOrder[3] = playerFour.getName();
                 //playerFourHand = playerFour.getHand();
 
-                for(int i=0; i<8; ++i){ //add 8 cards to each hand and delete those cards from deck
+                for(int i=0; i < NUMBER_OF_CARDS_PER_HAND; ++i){ //add 8 cards to each hand and delete those cards from deck
 
                     fillThreeHands();
                     playerFour.getHand().add(shuffledDeck.get(0));
@@ -204,17 +209,17 @@ public class Play {
                 playerNames [4] = playerNameFive;
 
                 playerNumber = (int)(Math.random() * numberOfPlayers); //randomly choose player 1, the following players are in order of entry
-                playerPosition = playerNumber;
+
                 buildFirstThreePlayers();
 
                 playerFour = new Player(playerNames[playerNumber]); //build 4th player
                 players[5] = playerFive;
-                playerOrder[3] = playerFour.getName();
+                //playerOrder[3] = playerFour.getName();
                 incrementPlayerNumber();
                 playerFive = new Player(playerNames[playerNumber]); //build 5th player
-                playerOrder[4] = playerFive.getName();
+                //playerOrder[4] = playerFive.getName();
 
-                for(int i=0; i<8; ++i){ //add 8 cards to each hand and delete those cards from deck
+                for(int i=0; i < NUMBER_OF_CARDS_PER_HAND; ++i){ //add 8 cards to each hand and delete those cards from deck
 
                     fillThreeHands();
                     playerFour.getHand().add(shuffledDeck.get(0));
@@ -224,6 +229,39 @@ public class Play {
                 }
                 break;
         }
+    }
+    public static int playGameMenu(){ //play game or quit
+
+        int number = 0;
+        do {
+            try{
+                menu = JOptionPane.showInputDialog(null, "THE RULES\nThe number of players and your names are entered first" +
+                        "\nThe first player is randomly chosen and the player sequence is displayed" +
+                        "\nThe first player must select one of the 5 categories then select their discard to start the game" +
+                        "\nThe active card name, category and value to beat are listed at the top of the selection panel" +
+                        "\nCategories are: Hardness, Specific Gravity, Cleavage, Crustal Abundance and Economic Value" +
+                        "\nIf there is no category value, you can discard any card" +
+                        "\nValues of Hardness and Specific Gravity are numerical and you must discard a higher value than displayed at top" +
+                        "\n\nValues of Cleavage from low to high: \"none\", \"poor/none\", \"1 poor\", \"2 poor\", \"1 good\", \"1 good, 1 poor\", \"2 good\", \"3 good\",\n" +
+                        "\"1 perfect\", \"1 perfect, 1 good\", \"1 perfect, 2 good\", \"2 perfect, 1 good\", \"3 perfect\", \"4 perfect\", \"6 perfect\"" +
+                        "\n\nValues of Crustal Abundance from low to high: \"ultratrace\", \"trace\", \"low\", \"moderate\", \"high\", \"very high\"" +
+                        "\n\nValues of Economic Value from low to high: \"trivial\", \"low\", \"moderate\", \"high\", \"very high\", \"I'm rich!\"" +
+                        "\n\nFamiliarize yourself with the above value sequences for a moment" +
+                        "\nTrump Cards reset the category and the value" +
+                        "\nMake your choise by entering the number beside your choice in the selection panel" +
+                        "\nIf you cannot throw a card you must pick up" +
+                        "\nWhen you discard, you must state your card name, active category and value" +
+                        "\nIf your selection is out of range or discard is calculated to be smaller than the active value, you will need to choose again" +
+                        "\n\nDo you wish to:\n1. Play Game\n2. Quit Game");
+
+                number = Integer.parseInt(menu);
+
+            } catch (Exception e) { //catch an input that isn't an integer
+
+                JOptionPane.showMessageDialog(null, "You must enter an integer 1-2");
+            }
+        }while(number != 1 && number != 2);
+        return number;
     }
     public static void playerWaitToStart(){ //wait for player to respond so cards are not visible to other players
 
@@ -320,28 +358,19 @@ public class Play {
         }
         return playerNumber;
     }
-    public static int incrementPlayerPosition(){
-
-        ++playerPosition;
-        if(playerPosition > numberOfPlayers - 1){
-
-            playerPosition = 0;
-        }
-        return playerPosition;
-    }
     public static void buildFirstThreePlayers(){ //build three players using the names in order of play; add names to playerOrder array
 
         playerOne = new Player(playerNames[playerNumber]);
         players[0] = playerOne;
-        playerOrder[0] = playerOne.getName();
+        //playerOrder[0] = playerOne.getName();
         incrementPlayerNumber();
         playerTwo = new Player(playerNames[playerNumber]);
         players[1] = playerTwo;
-        playerOrder[1] = playerTwo.getName();
+        //playerOrder[1] = playerTwo.getName();
         incrementPlayerNumber();
         playerThree = new Player(playerNames[playerNumber]);
         players[2] = playerThree;
-        playerOrder[2] = playerThree.getName();
+        //playerOrder[2] = playerThree.getName();
         incrementPlayerNumber();
     }
     public static int selectFirstCategory(Player player){ //view first player hand and select category
@@ -397,7 +426,7 @@ public class Play {
 
         message.append("\nThe Active category is ");
         message.append(activeCategory);
-        message.append(".\n"); //print active card and chosen active category
+        message.append("\n\n"); //print active card and chosen active category
         message.append(playerNames[playerNumber] + "'s cards are: ");
 
         for(int i = 0; i < handCards; ++i){ //display hand with selection numbers
@@ -422,7 +451,7 @@ public class Play {
 
                 JOptionPane.showMessageDialog(null, "You must enter an integer 1-" + hand.size());
             }
-        }while(number < 1 || number > hand.size() + 2); //choice is within range
+        }while(number < 1 || number > (hand.size() + 2)); //choice is within range
         return number - 1; //change to element number
     }
     static String getActiveCardValues(){ //build message at top of screen
