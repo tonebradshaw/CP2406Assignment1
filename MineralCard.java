@@ -58,12 +58,15 @@ public class MineralCard extends Card{ //inherit name from card and add extra in
     }
 
     @Override
+    public String getName(){ return this.name;}
+
+    @Override
     public String toString() { //used to print card information
 
-        return "Name: " + this.getName() + ",  " +
+        return "Name: " + super.name + ",  " +
                "Hardness: " + hardness + ",  " +
                "Specific Gravity: " + specificGravity + ",  " +
-               "Cleavage: " + cleavage+ '\n' +
+               "Cleavage: " + cleavage + ",  " +
                "Crustal Abundance: " + crustalAbundance + ",  " +
                "Economic Value: " + economicValue + '\n';
     }

@@ -11,13 +11,14 @@ public class TrumpCard extends Card{ //trump card information
         this.category = category;
     }
 
-    public String getCategory(){
-        return category;
-    }
+    public String getCategory(){return category;}
+
+    @Override
+    public String getName(){return this.name;}
 
     @Override
     public String toString() { //used to print trump card values
-        return "Name: " + this.getName() + ",  " +
+        return "Name: " + super.name + ",  " +
                 "Category: " + this.getCategory()+ "\n" ;
     }
 }

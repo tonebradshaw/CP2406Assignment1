@@ -1,16 +1,13 @@
 /**
  * Created by tony on 9/08/2016.
  */
-public class Card {
+public abstract class Card {
 
-    private String name;
+    protected String name;
 
-    public Card(String name){ //card constructor
+    public Card(){}
 
-        this.name = name;
-    }
-    public String getName(){
+    public Card(String name){this.name = name;} //card constructor
 
-        return name;
-    }
+    public abstract String getName();
 }
