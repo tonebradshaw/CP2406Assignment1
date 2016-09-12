@@ -6,33 +6,26 @@ import java.util.Scanner;
 
 public class Play {
 
-    static String [] playerNames;
-    //static String [] playerOrder;
     static ArrayList <Card> hand;
     static ArrayList <Card> discardedCards;
+    static ArrayList <Card> shuffledDeck = new ArrayList<>();
+
     static Card activeCard;
     static Scanner input;
     static StringBuilder stringBuilder;
-    static Player playerOne;
-    static Player playerTwo;
-    static Player playerThree;
-    static Player playerFour;
-    static Player playerFive;
-    static String playerNameOne;
-    static String playerNameTwo;
-    static String playerNameThree;
-    static String playerNameFour;
-    static String playerNameFive;
-    static int playerNumber, numberOfPlayers;
-    static int playerPosition, gos, compare, playGame;
-    static int handCards, category, question, card;
-    static String choice, activeCategory;
-    static String activeCardNotice, menu;
-    static Card [] hold;
+    static Player playerOne, playerTwo, playerThree, playerFour, playerFive;
+
+    static int playerNumber, numberOfPlayers, gos, compare, playGame, handCards, category, question, card;
+    static String playerNameOne, playerNameTwo, playerNameThree, playerNameFour, playerNameFive;
+    static String choice, activeCategory, activeCardNotice, menu;
+
     static final int NUMBER_OF_CARDS_PER_HAND = 8;
     static final int MAX_NUMBER_OF_PLAYERS = 5;
-    static ArrayList <Card> shuffledDeck = new ArrayList<>();
+
+    static String [] playerNames;
+    static Card [] hold;
     static Player [] players = new Player [MAX_NUMBER_OF_PLAYERS];
+
     static String [] cleavageHierarchy = {"none", "poor/none", "1 poor", "2 poor", "1 good", "1 good, 1 poor", "2 good", "3 good",
             "1 perfect", "1 perfect, 1 good", "1 perfect, 2 good", "2 perfect, 1 good", "3 perfect", "4 perfect", "6 perfect"};
     static String [] crustalAbundanceHierarchy = {"ultratrace", "trace", "low", "moderate", "high", "very high"};
@@ -103,60 +96,78 @@ public class Play {
 
                     activeCategory = categories[category]; //set active category
                     card = selectFirstCard(); //select card to throw
+                    players[playerNumber].setPickUpCard(0); //card not picked up
                     discardedCards.add(0, hand.get(card)); //add chosen card to discard pile
                     hand.remove(card); //remove card from hand
                     activeCard = discardedCards.get(0); //select active card
                     activeCardNotice = getActiveCardValues(); //add to display to show the active category and value
 
-                    gos = 1;
+                    gos = 1; //end first player turn
                 }
                 do{
                     compare = 0; //set compare to false
                     incrementPlayerNumber(); //next player
                     playerWaitToStart(); //wait til player is ready
+                    System.out.println(players[playerNumber].getName());
+                    if(players[playerNumber].getPickUpCard() == 1 && (players[incrementPlayerNumber()].getPickUpCard() +
+                            players[incrementPlayerNumber()].getPickUpCard()) == 0){
 
-                    do { //get card and check whether selected card category value > active card value
+                        System.out.println(players[incrementPlayerNumber()].getName()); //complete playerNumber cycle
 
-                        card = selectPlayerCard(players[playerNumber]); //return list selection
+                        JOptionPane.showMessageDialog(null, "You have picked up from the deck recently" +
+                                "\nand more then 1 player has discarded per round since you picked up and no Trump Card has been thrown" +
+                                "\nYou therefore must pass this turn");
+                    }else{
 
-                        if (card == players[playerNumber].getHand().size()) { //pick up from deck
+                        do { //get card and check whether selected card category value > active card value
 
-                            if(shuffledDeck.size() == 0){ //if there are no more cards to pick up
+                            card = selectPlayerCard(players[playerNumber]); //return list selection
 
-                                hold = new Card [1]; //create holding array
-                                hold[0] = discardedCards.get(0); //add active card to array
-                                discardedCards.remove(0); //remove active card from discard pile
+                            if (card == players[playerNumber].getHand().size()) { //pick up from deck
 
-                                for(int i = discardedCards.size() - 1; i >= 0 ; --i){ //transfer discards to shuffled deck
+                                players[playerNumber].setPickUpCard(1); //card picked up
 
-                                    shuffledDeck.add(discardedCards.get(i)); //add card to deck
-                                    discardedCards.remove(i); //remove card from pile
+                                if (shuffledDeck.size() == 0) { //if there are no more cards to pick up
+
+                                    hold = new Card[1]; //create holding array
+                                    hold[0] = discardedCards.get(0); //add active card to array
+                                    discardedCards.remove(0); //remove active card from discard pile
+
+                                    for (int i = discardedCards.size() - 1; i >= 0; --i) { //transfer discards to shuffled deck
+
+                                        shuffledDeck.add(discardedCards.get(i)); //add card to deck
+                                        discardedCards.remove(i); //remove card from pile
+                                    }
+                                    Collections.shuffle(shuffledDeck); //shuffle the deck
+                                    discardedCards.add(hold[0]); //add active card to empty discard pile
                                 }
-                                Collections.shuffle(shuffledDeck); //shuffle the deck
-                                discardedCards.add(hold[0]); //add active card to empty discard pile
-                            }
-                            players[playerNumber].getHand().add(shuffledDeck.get(0)); //get another card
-                            shuffledDeck.remove(0); //remove card from deck
-                            compare = 1; //allow
-                        }else{
-                            if (card == players[playerNumber].getHand().size() + 1) { //pass selected
-
-                                compare = 1;
-                            } else { //select card
-
-                                compare = compareValues(hand.get(card), activeCategory); //compare card selected to active card
+                                players[playerNumber].getHand().add(shuffledDeck.get(0)); //get another card
+                                shuffledDeck.remove(0); //remove card from deck
+                                compare = 1; //allow
+                            } else {
+                                compare = compareValues(hand.get(card)); //compare card selected to active card
                                 if (compare == 1) {
+                                    players[playerNumber].setPickUpCard(0); //set value to card thrown
                                     discardedCards.add(0, hand.get(card)); //add chosen card to discard pile
                                     hand.remove(card); //remove card from hand
                                 }
                             }
-                        }
-                    }while(compare == 0); //loop until result is satisfactory
+                        } while (compare == 0); //loop until compare is approved
+                        activeCard = discardedCards.get(0); //select active card
 
-                    activeCard = discardedCards.get(0); //select active card
-                    activeCardNotice = getActiveCardValues(); //add to display to show the active category and value
+                        if(discardedCards.get(0).getName().startsWith("The ")){ //if trump card thrown, reset all pickUpCard values
+
+                            players[incrementPlayerNumber()].setPickUpCard(0);
+                            players[incrementPlayerNumber()].setPickUpCard(0);
+                            players[incrementPlayerNumber()].setPickUpCard(0);
+
+                            incrementPlayerNumber(); //complete playerNumber cycle
+                        }
+                        activeCardNotice = getActiveCardValues(); //add to display to show the active category and value
+                    }
 
                 }while(playerOne.getHand().size() > 0 && playerTwo.getHand().size() > 0 && playerThree.getHand().size() > 0); //loop until end of game
+
                 //display winner
                 if(playerOne.getHand().size() == 0){
                     JOptionPane.showMessageDialog(null, "Yay!! Congratz on the win " + playerOne.getName());
@@ -249,6 +260,7 @@ public class Play {
                         "\n\nFamiliarize yourself with the above value sequences for a moment" +
                         "\nTrump Cards reset the category and the value" +
                         "\nMake your choise by entering the number beside your choice in the selection panel" +
+                        "\nIf you need to pass, you will be informed" +
                         "\nIf you cannot throw a card you must pick up" +
                         "\nWhen you discard, you must state your card name, active category and value" +
                         "\nIf your selection is out of range or discard is calculated to be smaller than the active value, you will need to choose again" +
@@ -273,22 +285,25 @@ public class Play {
 
             String playerSequence = "The order of play is " + playerNames[playerNumber] + ", " + playerNames[incrementPlayerNumber()] + ", "
                     + playerNames[incrementPlayerNumber()];
+            incrementPlayerNumber(); //complete playerNumber cycle
             JOptionPane.showMessageDialog(null, playerSequence);
 
         }else if(numberOfPlayers == 4) {
 
             String playerSequence = "The order of play is " + playerNames[playerNumber] + ", " + playerNames[incrementPlayerNumber()] + ", "
                     + playerNames[incrementPlayerNumber()] + ", " + playerNames[incrementPlayerNumber()];
+            incrementPlayerNumber(); //complete playerNumber cycle
             JOptionPane.showMessageDialog(null, playerSequence);
 
         }else if(numberOfPlayers == 5) {
 
             String playerSequence = "The order of play is " + playerNames[playerNumber] + ", " + playerNames[incrementPlayerNumber()] + ", "
                     + playerNames[incrementPlayerNumber()] + ", " + playerNames[incrementPlayerNumber()] + ", " + playerNames[incrementPlayerNumber()];
+            incrementPlayerNumber(); //complete playerNumber cycle
             JOptionPane.showMessageDialog(null, playerSequence);
         }
-        incrementPlayerNumber();
     }
+
     public static void fillThreeHands(){ //add cards to first three players hands
 
         playerOne.getHand().add(shuffledDeck.get(0));
@@ -316,9 +331,6 @@ public class Play {
         message.append(count);
         message.append(". Pick a card from deck");
         message.append("\n\n");
-        message.append(++count);
-        message.append(". Pass");
-        message.append("\n\n");
         message.append("Please enter a number 1-");
         message.append(count);
 
@@ -329,7 +341,7 @@ public class Play {
 
             } catch (Exception e) { //catch an input that isn't an integer
 
-                JOptionPane.showMessageDialog(null, "You must enter an integer 1-" + (handCards + 2));
+                JOptionPane.showMessageDialog(null, "You must enter an integer 1-" + (handCards + 1));
             }
         }while(number < 1 || number > handCards + 2);
         return number - 1; //change value to element number
@@ -362,15 +374,14 @@ public class Play {
 
         playerOne = new Player(playerNames[playerNumber]);
         players[0] = playerOne;
-        //playerOrder[0] = playerOne.getName();
         incrementPlayerNumber();
+
         playerTwo = new Player(playerNames[playerNumber]);
         players[1] = playerTwo;
-        //playerOrder[1] = playerTwo.getName();
         incrementPlayerNumber();
+
         playerThree = new Player(playerNames[playerNumber]);
         players[2] = playerThree;
-        //playerOrder[2] = playerThree.getName();
         incrementPlayerNumber();
     }
     public static int selectFirstCategory(Player player){ //view first player hand and select category
@@ -454,7 +465,7 @@ public class Play {
         }while(number < 1 || number > (hand.size() + 2)); //choice is within range
         return number - 1; //change to element number
     }
-    static String getActiveCardValues(){ //build message at top of screen
+    static String getActiveCardValues(){ //build message at top of selection display panel
 
         stringBuilder = new StringBuilder(); //build message
 
@@ -471,7 +482,7 @@ public class Play {
             } else if(activeCard.getName().equals("The Geologist")){ //if active card category is "all", player needs to choose category
                 do { //view cards and select active category until satisfied
 
-                    category = selectFirstCategory(players[playerPosition]); //display cards and select category
+                    category = selectFirstCategory(players[playerNumber]); //display cards and select category
                     question = checkCategory(category); //check selected category
 
                 }while(question != 0); //until category is accepted
@@ -523,13 +534,13 @@ public class Play {
         }
         return stringBuilder.toString();
     }
-    public static int compareValues(Card card, String checkCategory){ //compare active card and chosen card
+    public static int compareValues(Card card){ //compare active card and chosen card
 
         if(activeCard.getName().startsWith("The ") || card.getName().startsWith("The ")){ //skip trump cards
 
             compare = 1;
 
-        }else if(checkCategory.equals("Hardness")){ //compare hardness values
+        }else if(activeCategory.equals("Hardness")){ //compare hardness values
 
             if(((MineralCard)card).getHardness() > ((MineralCard)activeCard).getHardness()){
 
