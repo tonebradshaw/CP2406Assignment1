@@ -419,6 +419,11 @@ public class Play {
 
                 JOptionPane.showMessageDialog(null, "You must enter an integer 1-" + hand.size());
             }
+            if(hand.get(number-1).getName().startsWith("The ")){
+
+                JOptionPane.showMessageDialog(null, "You cannot throw a trump on the first go");
+                number = -1;
+            }
         }while(number < 1 || number > (hand.size() + 2)); //choice is within range
         return number - 1; //change to element number
     }
