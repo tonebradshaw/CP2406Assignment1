@@ -1,4 +1,3 @@
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -8,18 +7,28 @@ public class Player {
 
     private String name;
     private ArrayList <Card> hand;
+    private int pickupCardValue;
+    private int throwCard;
 
     public Player(String name){ //player constructor
 
         this.name = name;
+        hand  = new ArrayList<>();
     }
     public String getName(){ //retrieve player's name
 
         return name;
     }
-    public ArrayList getHand(){ //retrieve arrayList for player's hand
+    public ArrayList <Card> getHand(){ //retrieve arrayList for player's hand
 
-        hand = new ArrayList<>();
         return hand;
+    }
+    public void setPickUpCard(int pickupCardValue){
+
+        this.pickupCardValue = pickupCardValue;
+    }
+    public int getPickUpCard(){
+
+        return pickupCardValue;
     }
 }

@@ -20,11 +20,10 @@ public class Play {
     static String choice, activeCategory, activeCardNotice, menu;
 
     static final int NUMBER_OF_CARDS_PER_HAND = 8;
-    static final int MAX_NUMBER_OF_PLAYERS = 5;
 
     static String [] playerNames;
     static Card [] hold;
-    static Player [] players = new Player [MAX_NUMBER_OF_PLAYERS];
+    static Player [] players;
 
     static String [] cleavageHierarchy = {"none", "poor/none", "1 poor", "2 poor", "1 good", "1 good, 1 poor", "2 good", "3 good",
             "1 perfect", "1 perfect, 1 good", "1 perfect, 2 good", "2 perfect, 1 good", "3 perfect", "4 perfect", "6 perfect"};
@@ -34,7 +33,7 @@ public class Play {
 
     public static void main(String[] args) {
 
-        playGame = playGameMenu(); //play or quit
+        playGame = playGameMenu(); //show rules and play or quit option
 
         if(playGame == 2){
 
@@ -63,6 +62,7 @@ public class Play {
 
         playerNames = new String [numberOfPlayers]; //array containing player's names
         discardedCards = new ArrayList<>(); //arrayList containing the discard pile
+        players = new Player[numberOfPlayers]; //array containing Player objects
 
         gos = 0; //first player cycle
 
@@ -144,7 +144,7 @@ public class Play {
                         if(activeCard.getName().startsWith("The ")){ //if trump card thrown, reset all pickUpCard values
 
                             holdPlayerNumber = playerNumber; //hold playerNumber to reset after cycle
-                            players[incrementPlayerNumber()].setPickUpCard(0);
+                            players[playerNumber].setPickUpCard(0);
                             players[incrementPlayerNumber()].setPickUpCard(0);
                             players[incrementPlayerNumber()].setPickUpCard(0);
                             playerNumber = holdPlayerNumber; //reset playerNumber
@@ -252,7 +252,7 @@ public class Play {
                         if(activeCard.getName().startsWith("The ")){ //if trump card thrown, reset all pickUpCard values
 
                             holdPlayerNumber = playerNumber; //hold playerNumber to reset after cycle
-                            players[incrementPlayerNumber()].setPickUpCard(0);
+                            players[playerNumber].setPickUpCard(0);
                             players[incrementPlayerNumber()].setPickUpCard(0);
                             players[incrementPlayerNumber()].setPickUpCard(0);
                             players[incrementPlayerNumber()].setPickUpCard(0);
@@ -376,7 +376,7 @@ public class Play {
                         if(activeCard.getName().startsWith("The ")){ //if trump card thrown, reset all pickUpCard values
 
                             holdPlayerNumber = playerNumber; //hold playerNumber to reset after cycle
-                            players[incrementPlayerNumber()].setPickUpCard(0);
+                            players[playerNumber].setPickUpCard(0);
                             players[incrementPlayerNumber()].setPickUpCard(0);
                             players[incrementPlayerNumber()].setPickUpCard(0);
                             players[incrementPlayerNumber()].setPickUpCard(0);
@@ -389,7 +389,8 @@ public class Play {
 
                 }while(playerOne.getHand().size() > 0 && playerTwo.getHand().size() > 0 && playerThree.getHand().size() > 0
                         && playerFour.getHand().size() > 0 && playerFive.getHand().size() > 0); //loop until end of game
-                JOptionPane.showMessageDialog(null, "Game Over");
+
+                JOptionPane.showMessageDialog(null, "Game Over"); //end game panel
                 //display winner
                 if(playerOne.getHand().size() == 0){
                     JOptionPane.showMessageDialog(null, "Yay!! Congratz on the win " + playerOne.getName());
@@ -415,7 +416,6 @@ public class Play {
                         "\nThe first player is randomly chosen and the player sequence is displayed" +
                         "\nThe first player must select one of the 5 categories then select their discard to start the game" +
                         "\nCategories are: Hardness, Specific Gravity, Cleavage, Crustal Abundance and Economic Value" +
-                        "\nIf there is no category value, you can discard any card" +
                         "\nAfter the first play, the active card name, category and value to beat are listed at the top of the selection panel" +
                         "\n\nValues of Hardness and Specific Gravity are numerical and you must discard a higher value than displayed at the top of the selection panel" +
                         "\n\nValues of Cleavage from low to high: \"none\", \"poor/none\", \"1 poor\", \"2 poor\", \"1 good\", \"1 good, 1 poor\", \"2 good\", \"3 good\",\n" +
@@ -424,12 +424,12 @@ public class Play {
                         "\n\nValues of Economic Value from low to high: \"trivial\", \"low\", \"moderate\", \"high\", \"very high\", \"I'm rich!\"" +
                         "\n\nFamiliarize yourself with the Cleavage, Crustal Abundance and Economic Value value sequences above for a moment" +
                         "\nTrump Cards reset the category and the value" +
-                        "\nMake your choice by entering the number beside your choice in the selection panel input" +
-                        "\nIf you throw a card whose value is too small, you will be prompted to try again" +
+                        "\nIf there is no category value, you can discard any card" +
+                        "\nMake your selection by entering the number beside your choice in the selection panel input" +
                         "\nIf you need to pass, you will be informed" +
-                        "\nIf you cannot throw a card you must pick up" +
+                        "\nIf you cannot throw a card, you must pick up" +
                         "\nWhen you discard, you must state your card name, active category and value" +
-                        "\nIf your selection is out of range or discard is deemed smaller than the active value, you will need to choose again" +
+                        "\nIf your selection is out of range or your discard is deemed smaller than the active value, you will need to choose again" +
                         "\n\nDo you wish to:\n1. Play Game\n2. Quit Game");
 
                 number = Integer.parseInt(menu);
@@ -557,9 +557,9 @@ public class Play {
         handCards = hand.size();
         StringBuilder message = new StringBuilder(); //build card display
 
-        message.append("\nThe Active category is ");
+        message.append("\nThe Active category is "); //print active card and chosen active category
         message.append(activeCategory);
-        message.append("\n\n"); //print active card and chosen active category
+        message.append("\n\n");
         message.append(playerNames[playerNumber] + "'s cards are: ");
 
         for(int i = 0; i < handCards; ++i){ //display hand with selection numbers

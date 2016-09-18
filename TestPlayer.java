@@ -5,30 +5,60 @@ import java.util.ArrayList;
  */
 public class TestPlayer { //create 2 players, deal 8 cards to each player and print player's hands
 
+    static Player playerOne;
+    static Player playerTwo;
+
     public static void main(String[] args) {
 
-        Player player = new Player("Kim Pink"); //create player 1
-        Player player1 = new Player("Bob"); //create player 2
-        ArrayList <Card> hand = player.getHand(); //create and arrayList for player 1
-        ArrayList <Card> hand1 = player1.getHand(); //create hand arrayList for player 2
+        playerOne = new Player("Kim Pink"); //create player 1
+        playerTwo = new Player("Bob"); //create player 2
 
-        System.out.println(player.getName()); //test names
-        System.out.println(player1.getName());
+        System.out.println(playerOne.getName()); //test names
+        System.out.println(playerTwo.getName());
 
         Deck deck = new Deck(); //create deck of cards
 
         for(int i = 0; i < 16; ++i){ //deal cards alternately to each player
 
            if(i % 2 != 0) {
-               hand1.add(deck.cards[i]);
+               playerTwo.getHand().add(deck.cards[i]);
            }else{
-               hand.add(deck.cards[i]);
+               playerOne.getHand().add(deck.cards[i]);
            }
         }
-        for(int i = 0; i < 8; ++i){ //print player's hands
+        printPlayerOneHand();
+        printPlayerTwoHand();
+    }
+    public static void printPlayerOneHand(){
 
-            System.out.print(hand.get(i).getName());
-            System.out.println("    \t" + hand1.get(i).getName());
+        System.out.println("\n");
+
+        for(int i=0; i<8; ++i) {
+
+            if(((Card)(playerOne.getHand().get(i))).getName().startsWith("The ")){
+
+                System.out.println(((Card)(playerOne.getHand().get(i))).getName() + " - Category: " +
+                        ((TrumpCard)playerOne.getHand().get(i)).getCategory()); //print out selected Trump Card attributes
+                continue;
+            }
+            System.out.println(((Card)(playerOne.getHand().get(i))).getName() + " - Hardness: " +
+                    ((MineralCard) playerOne.getHand().get(i)).getHardness()); //print out selected Mineral Card attribute
+        }
+    }
+    public static void printPlayerTwoHand(){
+
+        System.out.println("\n");
+
+        for(int i=0; i<8; ++i) {
+
+            if(((playerTwo.getHand().get(i))).getName().startsWith("The ")){
+
+                System.out.println(((playerTwo.getHand().get(i))).getName() + " - Category: " +
+                        ((TrumpCard) playerTwo.getHand().get(i)).getCategory()); //print out selected Trump Card attributes
+                continue;
+            }
+            System.out.println(((playerTwo.getHand().get(i))).getName() + " - Hardness: " +
+                    ((MineralCard) playerTwo.getHand().get(i)).getHardness()); //print out selected Mineral Card attribute
         }
     }
 }

@@ -5,11 +5,12 @@ import java.lang.reflect.Array;
  */
 public class Deck {
 
-    public Card [] cards;
+    protected Card [] cards;
+    static protected final int DECK_SIZE = 60;
 
     public Deck() { //create deck of cards with trumps spread evenly throughout
 
-        cards = new Card[60];
+        cards = new Card[DECK_SIZE];
 
         cards[0] = new MineralCard("Quartz", "Sio2", "tectosilicate", "hexagonal",
                 "igneous metamorphic sedimentary", 7.0, 2.65, "poor/none", "high", "moderate");
@@ -56,7 +57,6 @@ public class Deck {
                 "igneous metamorphic mantle", 6.0, 3.9, "2 good", "high", "trivial");
 
         cards[15] = new TrumpCard("The Petrologist", "Crustal Abundance");
-
 
         cards[16] = new MineralCard("Chlorite", "(Mg,Fe)5Al2Si3O10(OH)8", "phyllosilicate", "monoclinic",
                 "metamorphic", 3.0, 3.3, "1 perfect", "moderate", "low");

@@ -5,8 +5,6 @@ public abstract class Card {
 
     protected String name;
 
-    public Card(){}
-
     public Card(String name){this.name = name;} //card constructor
 
     public abstract String getName();
